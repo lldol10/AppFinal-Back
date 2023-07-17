@@ -1,9 +1,9 @@
 const knex = require("../database/knex")
-
+const sqliteConnection = require("../database/sqlite")
 class PratosController{
     async create(request, response){
         const {name, category, description, tags, price} = request.body
-        const {user_id} = request.params
+        const user_id = request.user.id
 
              const [prato_id] = await knex("pratos").insert({
                  name,
@@ -12,6 +12,8 @@ class PratosController{
                  price,
                  user_id
              })
+
+             console.log(prato_id)
 
         const tagsInsert = tags.map(name => {
             return {
@@ -51,55 +53,15 @@ class PratosController{
     }
 
     async index(request, response){
-        // const {user_id} = request.query
+
+        const {name, tags} = request.query
+        const user_id = request.user.id
         
-
-        // let notes
-
-        // if(tags){
-            
-        //     const filterTags = tags.split(',').map(tag => tag.trim())
-        //     console.log(filterTags)
-        //     notes = await knex("tags")
-        //     .select([
-        //         "notes.id",
-        //         "notes.title",
-        //         "notes.user_id"
-        //     ])
-        //     .where("notes.user_id", user_id)
-        //     .whereLike("notes.title", `%${title}%`)
-        //     .whereIn("name", filterTags)
-        //     .innerJoin("notes", "notes.id", "tags.note_id")
-        //     .groupBy("notes.id")
-        //     .orderBy("notes.title")
-        //     console.log(notes)
-        // }else{
-        //     notes =  await knex("notes").where({user_id}).whereLike("title", `%${title}%`).orderBy("title")
-
-        // }
-
-        // const userTags = await knex("tags").where({user_id})
-        // console.log(userTags + "aqui luan")
-        // console.log(notes + "aqui é o note")
-        // const notesWithTags = notes.map(note => {
-        //     const noteTags = userTags.filter(tag => tag.note_id === note.id)
-
-        //     return{
-        //         ...note,
-        //         tags: noteTags
-
-        //     }
-        // })
-
-        // return response.json(notesWithTags)
-
-        const {user_id, name, tags} = request.query
-
          let pratos
 
         if(tags){
-            const filterTags = tags.split(',').map(tag => tag.trim())
-            
+            const filterTags = tags.split(',')
+            console.log(filterTags)
             pratos = await knex("tags")
             .select([
                 "pratos.id",
@@ -112,13 +74,17 @@ class PratosController{
             .whereIn("tags.name", filterTags)
             .innerJoin("pratos", "pratos.id", "tags.prato_id")
             .orderBy("pratos.name")
+
+        
         }else{
              pratos = await knex("pratos").where({user_id}).whereLike("name", `%${name}%`).orderBy("name")
+             
              
         }
 
         const userTags = await knex("tags").where({user_id})
-
+            console.log(userTags)
+            console.log(pratos)
         const pratosWithTags = pratos.map(prato =>{
             const pratoTags = userTags.filter(tag => tag.prato_id === prato.id)
 
@@ -129,6 +95,53 @@ class PratosController{
         })
         console.log(pratosWithTags)
         return response.json(pratosWithTags)
+    }
+
+    async update(request, response){
+        const {name, category, description, tags, price} = request.body
+        const {id} = request.params
+        const user_id = request.user.id
+
+
+        const database = await sqliteConnection()
+    
+        const prato = await database.get("SELECT * FROM pratos WHERE id = (?)", [id])
+
+        console.log(prato)
+   
+        prato.name = name ?? prato.name
+        prato.category = category ?? prato.category
+        prato.description = description ?? prato.description
+        prato.price = price ?? prato.price
+
+
+        await database.run(`
+        UPDATE pratos SET
+        name = ?,
+        category = ?,
+        description = ?,
+        price = ?,
+        updated_at = DATETIME('now')
+        WHERE id = ?`,
+        [prato.name, prato.category, prato.description, prato.price, id]
+        )
+
+        console.log(tags)
+
+        const tagsinsert = tags.map(tag => {
+            return{
+                name,
+                prato_id: id,
+                user_id
+            }
+        })
+
+        
+        await knex("tags").where({id}).delete()
+        await knex("tags").insert(tagsinsert)
+        
+
+        return response.status(200).json()
     }
 
 }

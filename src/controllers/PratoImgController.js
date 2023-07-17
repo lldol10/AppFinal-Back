@@ -4,30 +4,32 @@ const DiskStorage = require("../providers/DiskStorage")
 
 
 
-class UserAvatarController{
+class PratoImgController{
     async update(request, response){
         const user_id = request.user.id
+        const {id} = request.params
         const avatarFileName = request.file.filename
 
         const diskStorage = new DiskStorage()
 
-        const user = await knex("users").where({id: user_id}).first()
-
-        if(!user){
+        const prato = await knex("pratos").where({id}).first()
+        console.log(prato)
+        if(!prato){
             throw new AppError("Somente usuarios altenticados podem mudar o avatar", 401)
         }
 
-        if(user.avatar){
-            await diskStorage
+        if(prato.imagem){
+            await diskStorage.deleteFile(prato.imagem)
         }
 
         const filename = await diskStorage.saveFile(avatarFileName)
-        user.avatar = filename
+        prato.imagem = filename
 
-        await knex("users").update(user).where({id: user_id})
-        return response.json(user)
+        console.log(prato)
+        await knex("pratos").update(prato).where({id})
+        return response.json(prato)
 
     }
 }
 
-module.exports = UserAvatarController
+module.exports = PratoImgController
