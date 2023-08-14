@@ -12,7 +12,7 @@ const upload = multer(uploadConfig.MULTER)
 const pratosController = new PratosController()
 const pratoImgController = new PratoImgController()
 
-pratosRoutes.use(ensureAuthenticated)
+ pratosRoutes.use(ensureAuthenticated)
 
 pratosRoutes.get("/",pratosController.index)
 pratosRoutes.post("/",pratosController.create)

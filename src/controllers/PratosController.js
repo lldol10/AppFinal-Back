@@ -54,47 +54,48 @@ class PratosController{
 
     async index(request, response){
 
-        const {name, tags} = request.query
-        const user_id = request.user.id
+        // const {name, tags} = request.query
+        // const user_id = request.user.id
         
-         let pratos
+        //  let pratos
 
-        if(tags){
-            const filterTags = tags.split(',')
-            console.log(filterTags)
-            pratos = await knex("tags")
-            .select([
-                "pratos.id",
-                "pratos.name",
-                "pratos.user_id"
-            ])
+        // if(tags){
+        //     const filterTags = tags.split(',')
+        //     console.log(filterTags)
+        //     pratos = await knex("tags")
+        //     .select([
+        //         "pratos.id",
+        //         "pratos.name",
+        //         "pratos.user_id"
+        //     ])
             
-            .where("pratos.user_id", user_id)
-            .whereLike("pratos.name",  `%${name}%`)
-            .whereIn("tags.name", filterTags)
-            .innerJoin("pratos", "pratos.id", "tags.prato_id")
-            .orderBy("pratos.name")
+        //     .where("pratos.user_id", user_id)
+        //     .whereLike("pratos.name",  `%${name}%`)
+        //     .whereIn("tags.name", filterTags)
+        //     .innerJoin("pratos", "pratos.id", "tags.prato_id")
+        //     .orderBy("pratos.name")
 
         
-        }else{
-             pratos = await knex("pratos").where({user_id}).whereLike("name", `%${name}%`).orderBy("name")
+        // }else{
+        //      pratos = await knex("pratos").where({user_id}).whereLike("name", `%${name}%`).orderBy("name")
              
              
-        }
+        // }
 
-        const userTags = await knex("tags").where({user_id})
-            console.log(userTags)
-            console.log(pratos)
-        const pratosWithTags = pratos.map(prato =>{
-            const pratoTags = userTags.filter(tag => tag.prato_id === prato.id)
+        // const userTags = await knex("tags").where({user_id})
+ 
+        // const pratosWithTags = pratos.map(prato =>{
+        //     const pratoTags = userTags.filter(tag => tag.prato_id === prato.id)
 
-         return{
-             ...prato,
-             tags: pratoTags
-         }
-        })
-        console.log(pratosWithTags)
-        return response.json(pratosWithTags)
+        //  return{
+        //      ...prato,
+        //      tags: pratoTags
+        //  }
+        // })
+        // console.log(pratosWithTags)
+        // return response.json(pratosWithTags)
+        const pratos = await knex("pratos")
+        return response.json(pratos)
     }
 
     async update(request, response){
@@ -102,7 +103,7 @@ class PratosController{
         const {id} = request.params
         const user_id = request.user.id
 
-
+        console.log(id)
         const database = await sqliteConnection()
     
         const prato = await database.get("SELECT * FROM pratos WHERE id = (?)", [id])
@@ -126,7 +127,6 @@ class PratosController{
         [prato.name, prato.category, prato.description, prato.price, id]
         )
 
-        console.log(tags)
 
         const tagsinsert = tags.map(tag => {
             return{
