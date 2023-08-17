@@ -1,8 +1,10 @@
 const knex = require("../database/knex")
 const sqliteConnection = require("../database/sqlite")
+const PratoImgController = require("./PratoImgController")
+
 class PratosController{
     async create(request, response){
-        const {name, category, description, tags, price} = request.body
+        const {name, category, description, avatar, tags, price} = request.body
         const user_id = request.user.id
 
              const [prato_id] = await knex("pratos").insert({
@@ -13,7 +15,7 @@ class PratosController{
                  user_id
              })
 
-             console.log(prato_id)
+             PratoImgController.update
 
         const tagsInsert = tags.map(name => {
             return {
@@ -103,17 +105,25 @@ class PratosController{
         const {id} = request.params
         const user_id = request.user.id
 
-        console.log(id)
+        PratoImgController.update()
+
+        
         const database = await sqliteConnection()
     
         const prato = await database.get("SELECT * FROM pratos WHERE id = (?)", [id])
 
-        console.log(prato)
+        console.log('nome que eu coloquei: ' + name)
+        console.log('nome que está no banco: ' + prato.name)
    
-        prato.name = name ?? prato.name
-        prato.category = category ?? prato.category
-        prato.description = description ?? prato.description
-        prato.price = price ?? prato.price
+        //prato.name = name ?? prato.
+        name ? prato.name = name : prato.name = prato.name
+        category ? prato.category = category : prato.category = prato.category
+        description ? prato.description = description : prato.description = prato.description
+        price ? prato.price = price : prato.price = prato.price
+        
+    
+
+        console.log('nome que ficou no final: ' + prato.name)
 
 
         await database.run(`
@@ -142,6 +152,7 @@ class PratosController{
         
 
         return response.status(200).json()
+        
     }
 
 }

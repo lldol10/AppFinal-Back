@@ -15,10 +15,10 @@ const pratoImgController = new PratoImgController()
  pratosRoutes.use(ensureAuthenticated)
 
 pratosRoutes.get("/",pratosController.index)
-pratosRoutes.post("/",pratosController.create)
+pratosRoutes.post("/",  pratosController.create)
 pratosRoutes.get("/:id",pratosController.show)
 pratosRoutes.delete("/:id",pratosController.delete)
 pratosRoutes.put("/:id",ensureAuthenticated, pratosController.update)
-pratosRoutes.patch("/avatar/:id",ensureAuthenticated, upload.single("avatar"), pratoImgController.update)
+pratosRoutes.patch("/avatar/:id",upload.single("avatar"),pratoImgController.update)
 
 module.exports = pratosRoutes

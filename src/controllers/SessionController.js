@@ -11,9 +11,9 @@ const {sign} = require("jsonwebtoken")
 class SessionController{
     async create(request, response) {
         const {email, password} = request.body
-
+        
         const user = await knex("users").where({email}).first()
-
+        
         if(!user){
             throw new AppError("Usuario e / ou senha não existe", 401)
         }
@@ -31,7 +31,7 @@ class SessionController{
             expiresIn
         })
 
-    
+   
         return response.json({user, token})
     }
 }

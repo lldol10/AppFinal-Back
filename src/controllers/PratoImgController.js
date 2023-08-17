@@ -6,7 +6,7 @@ const DiskStorage = require("../providers/DiskStorage")
 
 class PratoImgController{
     async update(request, response){
-        const user_id = request.user.id
+        const prato_id = request.body
         const {id} = request.params
         const avatarFileName = request.file.filename
 
