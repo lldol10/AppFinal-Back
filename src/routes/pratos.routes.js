@@ -18,7 +18,7 @@ pratosRoutes.get("/",pratosController.index)
 pratosRoutes.post("/",  pratosController.create)
 pratosRoutes.get("/:id",pratosController.show)
 pratosRoutes.delete("/:id",pratosController.delete)
-pratosRoutes.put("/:id",ensureAuthenticated, pratosController.update)
+pratosRoutes.put("/:id",upload.single("avatar"), pratosController.update)
 pratosRoutes.patch("/avatar/:id",upload.single("avatar"),pratoImgController.update)
 
 module.exports = pratosRoutes

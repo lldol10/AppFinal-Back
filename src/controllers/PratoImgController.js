@@ -10,10 +10,12 @@ class PratoImgController{
         const {id} = request.params
         const avatarFileName = request.file.filename
 
+        console.log('request' + request)
+
         const diskStorage = new DiskStorage()
 
         const prato = await knex("pratos").where({id}).first()
-        console.log(prato)
+        
         if(!prato){
             throw new AppError("Somente usuarios altenticados podem mudar o avatar", 401)
         }
@@ -25,7 +27,6 @@ class PratoImgController{
         const filename = await diskStorage.saveFile(avatarFileName)
         prato.imagem = filename
 
-        console.log(prato)
         await knex("pratos").update(prato).where({id})
         return response.json(prato)
 

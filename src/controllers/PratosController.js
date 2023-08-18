@@ -35,7 +35,7 @@ class PratosController{
 
     async show(request, response){
         const { id } = request.params
-        console.log(id)
+        
         const prato = await knex("pratos").where({id}).first()
         const tags = await knex("tags").where({prato_id: id}).orderBy("name")
         // const links = await knex("links").where({note_id: id}).orderBy("created_at")
@@ -105,7 +105,7 @@ class PratosController{
         const {id} = request.params
         const user_id = request.user.id
 
-        PratoImgController.update()
+       
 
         
         const database = await sqliteConnection()
