@@ -1,6 +1,6 @@
 # BACK AND DO PROJETO FOOD EXPLORER
 
-Esse projeto é a parte Back And da aplicação Food Explorer (https://github.com/lldol10/foodexplorer)
+Esse projeto é a parte Back And da aplicação Food Explorer (https://github.com/lldol10/AppFinal-Back)
 
 Link do Deploy ---> **https://foodexplorer-t29z.onrender.com**
 
@@ -57,6 +57,8 @@ Mencione todos aqueles que ajudaram a levantar o projeto desde o seu início
 * Projeto que tem a cara de um site de um restaurante 📢;
 * Interações básicas de CRUD e aparências e design bem legais 🍺;
 * Um desafio muito legal poder fazer parte desse projeto 🫂;
+
+
   
 
 
