@@ -2,6 +2,8 @@
 
 Esse projeto é a parte Back And da aplicação Food Explorer (https://github.com/lldol10/foodexplorer)
 
+Link do Deploy ---> **https://foodexplorer-t29z.onrender.com**
+
 ## 🚀 Começando
 
 Essas instruções permitirão que você obtenha uma cópia do projeto em operação na sua máquina local para fins de desenvolvimento e teste.
