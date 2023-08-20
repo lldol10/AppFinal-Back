@@ -56,6 +56,51 @@ class PratosController{
 
     async index(request, response){
 
+        const {name, tags} = request.query
+
+
+        let pratos
+
+         if(tags){
+             const filterTags = tags.split(',')
+             console.log(filterTags)
+             pratos = await knex("tags")
+             .select([
+                 "pratos.id",
+                 "pratos.name",
+                 "pratos.user_id"
+             ])
+            
+             .where("pratos.user_id", user_id)
+             .whereLike("pratos.name",  `%${name}%`)
+             .whereIn("tags.name", filterTags)
+             .innerJoin("pratos", "pratos.id", "tags.prato_id")
+             .orderBy("pratos.name")
+
+        
+         }else if (name){
+              pratos = await knex("pratos").whereLike("name", `%${name}%`).orderBy("name")
+             
+             
+         } else{
+            pratos = await knex("pratos")
+         }
+
+
+
+        // if(name){
+        //      pratos = await knex("pratos")
+        //  .whereLike("name", `%${name}%`)
+        //  .orderBy("name")
+        // }else{
+        //      pratos = await knex("pratos")
+        // }
+
+        
+   
+        
+        return response.json(pratos)
+
         // const {name, tags} = request.query
         // const user_id = request.user.id
         
@@ -96,12 +141,12 @@ class PratosController{
         // })
         // console.log(pratosWithTags)
         // return response.json(pratosWithTags)
-        const pratos = await knex("pratos")
-        return response.json(pratos)
+        
     }
 
     async update(request, response){
         const {name, category, description, tags, price} = request.body
+        
         const {id} = request.params
         const user_id = request.user.id
 
@@ -112,9 +157,7 @@ class PratosController{
     
         const prato = await database.get("SELECT * FROM pratos WHERE id = (?)", [id])
 
-        console.log('nome que eu coloquei: ' + name)
-        console.log('nome que está no banco: ' + prato.name)
-   
+    
         //prato.name = name ?? prato.
         name ? prato.name = name : prato.name = prato.name
         category ? prato.category = category : prato.category = prato.category
@@ -123,7 +166,7 @@ class PratosController{
         
     
 
-        console.log('nome que ficou no final: ' + prato.name)
+       
 
 
         await database.run(`
@@ -139,15 +182,18 @@ class PratosController{
 
 
         const tagsinsert = tags.map(tag => {
+            
             return{
-                name,
+                name: tag,
                 prato_id: id,
                 user_id
             }
         })
 
         
-        await knex("tags").where({id}).delete()
+
+        
+        await knex("tags").where({prato_id: id}).delete()
         await knex("tags").insert(tagsinsert)
         
 

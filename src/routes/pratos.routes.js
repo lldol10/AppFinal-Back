@@ -15,7 +15,7 @@ const pratoImgController = new PratoImgController()
  pratosRoutes.use(ensureAuthenticated)
 
 pratosRoutes.get("/",pratosController.index)
-pratosRoutes.post("/",  pratosController.create)
+pratosRoutes.post("/", upload.single("avatar"),  pratosController.create)
 pratosRoutes.get("/:id",pratosController.show)
 pratosRoutes.delete("/:id",pratosController.delete)
 pratosRoutes.put("/:id",upload.single("avatar"), pratosController.update)
